@@ -86,7 +86,8 @@ function compile(str) {
     while (stack.length > 0) {
         out.push(stack.pop());
     }
-    return out.join(' ');
+    evaluate(out.join(' '))
+    
 }
 
 // Функция evaluate принимает один аргумент -- строку 
@@ -98,7 +99,33 @@ function compile(str) {
 // (https://ru.wikipedia.org/wiki/Обратная_польская_запись#Вычисления_на_стеке).
 
 function evaluate(str) {
-    // your code here
+    stack = []
+    arr = String(str).split(" ")
+    console.log(arr)
+    for(let i = 0; i < arr.length; i++){
+        if(isNumeric(arr[i]) || isDigit(arr[i])){
+            stack.push(arr[i])
+        }
+        if(isOperation(arr[i])){
+            var a = stack[stack.length - 1]
+            stack.pop()
+            var b = stack[stack.length - 1]
+            stack.pop()
+            stack.push(process(a, b, arr[i]))
+            console.log(stack)
+        }
+    }
+    document.getElementById('screen').innerHTML = Math.round(stack[0] * 100) / 100
+}
+function process(a, b, oper){
+    
+    switch(oper){
+        case "+": return Number(a) + Number(b)
+        case "-": return Number(a) - Number(b)
+        case "/": return Number(a) / Number(b)
+        case "*": return Number(a) * Number(b)
+    }
+        
 }
 
 // Функция clickHandler предназначена для обработки 
@@ -116,11 +143,38 @@ function evaluate(str) {
 // не назначать обработчик для каждой кнопки в отдельности.
 
 function clickHandler(event) {
-    // your code here
+    if(event.target.className == "key-digit" || event.target.className == "key-bracket"){
+       document.getElementById('screen').innerHTML =  document.getElementById('screen').innerHTML + event.target.innerHTML
+    }
+    else if(event.target.className == "key-operation"){
+        document.getElementById('screen').innerHTML =  document.getElementById('screen').innerHTML+ event.target.innerHTML 
+    }
+    if(event.target.id == "key-clear"){
+        document.getElementById('screen').innerHTML = ""
+    }
+    if(event.target.id == "key-result"){
+        console.log(document.getElementById('screen').innerHTML)
+        compile(document.getElementById('screen').innerHTML)
+    }
+    
 }
 
 
 // Назначьте нужные обработчики событий.
 window.onload = function () {
-    // your code here
+   let arr = document.getElementsByClassName('key-digit')
+    for(let i = 0; i < arr.length; i++){
+        arr[i].addEventListener('click', clickHandler, false)
+    }
+    arr = document.getElementsByClassName('key-operation')
+    for(let i = 0; i < arr.length; i++){
+        arr[i].addEventListener('click', clickHandler, false)
+    }
+    arr = document.getElementsByClassName('key-bracket')
+    for(let i = 0; i < arr.length; i++){
+        arr[i].addEventListener('click', clickHandler, false)
+    }
+    document.getElementById('screen').innerHTML = ""
+    document.getElementById('key-clear').addEventListener('click', clickHandler, false)
+    document.getElementById('key-result').addEventListener('click', clickHandler, false)
 }
