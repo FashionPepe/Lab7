@@ -86,6 +86,7 @@ function compile(str) {
     while (stack.length > 0) {
         out.push(stack.pop());
     }
+    
     evaluate(out.join(' '))
     
 }
@@ -109,8 +110,13 @@ function evaluate(str) {
         if(isOperation(arr[i])){
             var a = stack[stack.length - 1]
             stack.pop()
-            var b = stack[stack.length - 1]
-            stack.pop()
+            if(stack.length > 0){
+                var b = stack[stack.length - 1]
+                stack.pop()
+            }
+            else{
+                var b = 0
+            }
             stack.push(process(a, b, arr[i]))
             console.log(stack)
         }
@@ -120,10 +126,10 @@ function evaluate(str) {
 function process(a, b, oper){
     
     switch(oper){
-        case "+": return Number(a) + Number(b)
-        case "-": return Number(a) - Number(b)
-        case "/": return Number(a) / Number(b)
-        case "*": return Number(a) * Number(b)
+        case "+": return Number(b) + Number(a)
+        case "-": return Number(b) - Number(a)
+        case "/": return Number(b) / Number(a)
+        case "*": return Number(b) * Number(a)
     }
         
 }
@@ -153,7 +159,7 @@ function clickHandler(event) {
         document.getElementById('screen').innerHTML = ""
     }
     if(event.target.id == "key-result"){
-        console.log(document.getElementById('screen').innerHTML)
+        
         compile(document.getElementById('screen').innerHTML)
     }
     
